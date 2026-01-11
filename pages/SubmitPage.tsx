@@ -50,7 +50,8 @@ const SubmitPage: React.FC = () => {
       setSubmitted(true);
       setFormData({ name: '', email: '', message: '', rating: 5 });
     } catch (err: any) {
-      alert(`Erreur Supabase : ${err.message}\n\nVérifiez que la table 'testimonials' existe et que les politiques RLS autorisent l'insertion.`);
+      console.error("Détails de l'erreur Supabase:", err);
+      alert(`Oups ! Erreur technique : ${err.message || 'Problème de connexion'}\n\nAssurez-vous d'avoir bien créé la table 'testimonials' dans votre SQL Editor Supabase avec le script fourni.`);
     } finally {
       setLoading(false);
     }
@@ -65,7 +66,6 @@ const SubmitPage: React.FC = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
             </svg>
           </div>
-          
           <div className="absolute inset-0 flex items-center justify-center animate-fade-in-up" style={{ animationDelay: '0.8s', opacity: 1 }}>
              <div className="bg-green-100 text-green-600 w-20 h-20 rounded-2xl flex items-center justify-center shadow-xl shadow-green-100/50">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -76,9 +76,9 @@ const SubmitPage: React.FC = () => {
         </div>
 
         <div className="animate-fade-in-up" style={{ animationDelay: '1s', opacity: 1 }}>
-          <h2 className="text-2xl md:text-4xl font-black text-slate-900 mb-4 tracking-tight">Message envoyé !</h2>
+          <h2 className="text-2xl md:text-4xl font-black text-slate-900 mb-4 tracking-tight">Message reçu !</h2>
           <p className="text-sm md:text-xl text-slate-500 mb-8 max-w-sm mx-auto leading-relaxed opacity-80">
-            Votre témoignage est enregistré. Il sera publié dès validation.
+            Merci beaucoup. Votre témoignage a été enregistré avec succès et sera publié après modération.
           </p>
           <button
             onClick={() => setSubmitted(false)}
@@ -98,9 +98,9 @@ const SubmitPage: React.FC = () => {
           <div className="hidden md:block absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-blue-600/20 rounded-full blur-3xl"></div>
           <div className="relative z-10">
             <div className="w-10 h-1 bg-blue-500 mb-6 rounded-full"></div>
-            <h2 className="text-2xl md:text-5xl font-black mb-4 tracking-tight leading-tight">Votre avis compte.</h2>
+            <h2 className="text-2xl md:text-5xl font-black mb-4 tracking-tight leading-tight">Votre expérience compte.</h2>
             <p className="text-slate-400 leading-relaxed text-sm md:text-lg font-medium opacity-90">
-              Partagez votre expérience et aidez la communauté iVision.
+              Aidez-nous à nous améliorer et guidez les autres utilisateurs.
             </p>
           </div>
         </div>
@@ -108,11 +108,12 @@ const SubmitPage: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8" noValidate>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
               <div>
-                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Nom complet</label>
+                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Prénom / Nom</label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="Ex: Jean Dupont"
                   className={`w-full px-5 py-3 md:px-6 md:py-4 bg-white/50 border rounded-xl md:rounded-2xl focus:ring-4 focus:ring-blue-500/10 outline-none text-slate-900 ${
                     errors.name ? 'border-red-500' : 'border-slate-100'
                   }`}
@@ -124,13 +125,14 @@ const SubmitPage: React.FC = () => {
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  placeholder="jean@exemple.fr"
                   className="w-full px-5 py-3 md:px-6 md:py-4 bg-white/50 border border-slate-100 rounded-xl md:rounded-2xl focus:ring-4 focus:ring-blue-500/10 outline-none text-slate-900"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1">Note globale</label>
+              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1">Quelle note nous donnez-vous ?</label>
               <div className="bg-white/30 p-4 md:p-8 rounded-2xl border border-white/60">
                 <StarRating 
                   rating={formData.rating} 
@@ -141,11 +143,12 @@ const SubmitPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Votre message</label>
+              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Votre témoignage</label>
               <textarea
                 rows={4}
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                placeholder="Partagez les détails de votre expérience..."
                 className={`w-full px-5 py-3 md:px-6 md:py-4 bg-white/50 border rounded-xl md:rounded-2xl focus:ring-4 focus:ring-blue-500/10 outline-none resize-none text-slate-900 ${
                   errors.message ? 'border-red-500' : 'border-slate-100'
                 }`}
@@ -155,9 +158,14 @@ const SubmitPage: React.FC = () => {
             <button
               disabled={loading}
               type="submit"
-              className="w-full bg-blue-600 text-white py-4 md:py-6 rounded-xl font-black text-sm md:text-xl shadow-xl hover:bg-blue-700 transition-all active:scale-95 disabled:opacity-50"
+              className="w-full bg-blue-600 text-white py-4 md:py-6 rounded-xl font-black text-sm md:text-xl shadow-xl hover:bg-blue-700 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3"
             >
-              {loading ? 'Envoi en cours...' : 'Envoyer mon avis'}
+              {loading ? (
+                <>
+                  <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <span>Transmission...</span>
+                </>
+              ) : 'Publier mon avis'}
             </button>
           </form>
         </div>

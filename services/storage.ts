@@ -14,25 +14,28 @@ export const getTestimonials = async (): Promise<Testimonial[]> => {
     .order('created_at', { ascending: false });
 
   if (error) {
-    console.error('Supabase fetch error:', error);
+    console.error('Erreur Supabase Fetch:', error);
     throw new Error(error.message);
   }
-  return data as Testimonial[];
+  return data || [];
 };
 
-export const saveTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'created_at' | 'status' | 'is_certified'>): Promise<void> => {
+export const saveTestimonial = async (data: { name: string, email: string, message: string, rating: number }): Promise<void> => {
   const { error } = await supabase
     .from('testimonials')
     .insert([
       {
-        ...testimonial,
+        name: data.name,
+        email: data.email || null,
+        message: data.message,
+        rating: data.rating,
         status: TestimonialStatus.PENDING,
         is_certified: false
       }
     ]);
 
   if (error) {
-    console.error('Supabase insert error:', error);
+    console.error('Erreur Supabase Insert:', error);
     throw new Error(error.message);
   }
 };
@@ -44,7 +47,7 @@ export const updateTestimonialStatus = async (id: string, status: TestimonialSta
     .eq('id', id);
 
   if (error) {
-    console.error('Supabase update status error:', error);
+    console.error('Erreur Supabase Update Status:', error);
     throw new Error(error.message);
   }
 };
@@ -56,7 +59,7 @@ export const toggleTestimonialCertification = async (id: string, currentCertifie
     .eq('id', id);
 
   if (error) {
-    console.error('Supabase toggle certify error:', error);
+    console.error('Erreur Supabase Certify:', error);
     throw new Error(error.message);
   }
 };
@@ -68,7 +71,7 @@ export const deleteTestimonial = async (id: string): Promise<void> => {
     .eq('id', id);
 
   if (error) {
-    console.error('Supabase delete error:', error);
+    console.error('Erreur Supabase Delete:', error);
     throw new Error(error.message);
   }
 };
