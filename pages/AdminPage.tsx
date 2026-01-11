@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { getTestimonials, updateTestimonialStatus, deleteTestimonial, toggleTestimonialCertification } from '../services/storage';
-import { login, logout, isAuthenticated as checkAuth } from '../services/auth';
-import { Testimonial, TestimonialStatus } from '../types';
-import StarRating from '../components/StarRating';
+import { getTestimonials, updateTestimonialStatus, deleteTestimonial, toggleTestimonialCertification } from '../services/storage.ts';
+import { login, logout, isAuthenticated as checkAuth } from '../services/auth.ts';
+import { Testimonial, TestimonialStatus } from '../types.ts';
+import StarRating from '../components/StarRating.tsx';
 
 type SortOption = 'date-desc' | 'date-asc' | 'name-asc';
 
@@ -155,7 +155,6 @@ const AdminPage: React.FC = () => {
         </div>
       </header>
 
-      {/* VERSION MOBILE : Plus compacte */}
       <div className="lg:hidden space-y-4">
         {processedTestimonials.map((t) => (
           <div key={t.id} className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
@@ -196,7 +195,6 @@ const AdminPage: React.FC = () => {
         ))}
       </div>
 
-      {/* VERSION DESKTOP : Inchangée */}
       <div className="hidden lg:block bg-white rounded-[2rem] shadow-xl border border-slate-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left">

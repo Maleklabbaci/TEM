@@ -1,10 +1,10 @@
 
 import React from 'react';
 import { HashRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import ClientsPage from './pages/ClientsPage';
-import SubmitPage from './pages/SubmitPage';
-import AdminPage from './pages/AdminPage';
+import Navbar from './components/Navbar.tsx';
+import ClientsPage from './pages/ClientsPage.tsx';
+import SubmitPage from './pages/SubmitPage.tsx';
+import AdminPage from './pages/AdminPage.tsx';
 
 const App: React.FC = () => {
   return (
@@ -23,7 +23,6 @@ const App: React.FC = () => {
             <p className="text-slate-400 text-sm">
               © {new Date().getFullYear()} iVision Témoignages. Tous droits réservés.
             </p>
-            {/* Hidden admin access point - very discrete */}
             <Link 
               to="/admin" 
               className="text-[10px] text-slate-100 hover:text-slate-300 transition-colors duration-500 select-none"

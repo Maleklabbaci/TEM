@@ -1,5 +1,5 @@
 
-import { Testimonial, TestimonialStatus, StorageData } from '../types';
+import { Testimonial, TestimonialStatus, StorageData } from '../types.ts';
 
 const STORAGE_KEY = 'ivision_testimonials_data';
 

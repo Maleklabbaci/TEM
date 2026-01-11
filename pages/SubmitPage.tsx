@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
-import { saveTestimonial } from '../services/storage';
-import StarRating from '../components/StarRating';
+import { saveTestimonial } from '../services/storage.ts';
+import StarRating from '../components/StarRating.tsx';
 
 const SubmitPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -48,7 +48,6 @@ const SubmitPage: React.FC = () => {
     }
 
     setLoading(true);
-    // Simulation d'envoi avec un délai légèrement plus long pour apprécier la transition
     await new Promise(resolve => setTimeout(resolve, 1200));
     
     saveTestimonial(formData);
@@ -62,14 +61,12 @@ const SubmitPage: React.FC = () => {
     return (
       <div className="max-w-xl mx-auto px-4 py-12 md:py-32 text-center overflow-hidden">
         <div className="relative h-32 flex items-center justify-center mb-8">
-          {/* L'avion qui s'envole */}
           <div className="animate-fly text-blue-600">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
             </svg>
           </div>
           
-          {/* Le cercle de succès qui apparaît après */}
           <div className="absolute inset-0 flex items-center justify-center animate-fade-in-up" style={{ animationDelay: '0.8s', opacity: 0 }}>
              <div className="bg-green-100 text-green-600 w-20 h-20 rounded-2xl flex items-center justify-center shadow-xl shadow-green-100/50">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">

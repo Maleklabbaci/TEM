@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import ActionModal from './ActionModal';
+import ActionModal from './ActionModal.tsx';
 
 const Navbar: React.FC = () => {
   const location = useLocation();
@@ -42,7 +42,6 @@ const Navbar: React.FC = () => {
                 </Link>
               ))}
             </div>
-            {/* Mobile menu links compact */}
             <div className="flex sm:hidden space-x-5">
                {navLinks.map((link) => (
                 <Link

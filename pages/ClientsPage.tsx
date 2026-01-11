@@ -1,8 +1,8 @@
 
 import React, { useEffect, useState } from 'react';
-import { getTestimonials } from '../services/storage';
-import { Testimonial, TestimonialStatus } from '../types';
-import StarRating from '../components/StarRating';
+import { getTestimonials } from '../services/storage.ts';
+import { Testimonial, TestimonialStatus } from '../types.ts';
+import StarRating from '../components/StarRating.tsx';
 
 const ClientsPage: React.FC = () => {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
