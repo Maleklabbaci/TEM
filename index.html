@@ -24,9 +24,8 @@
         }
         input, textarea {
             font-size: 16px !important;
-            color: #0f172a !important; /* Force text to slate-900 */
+            color: #0f172a !important;
         }
-        /* Effet de verre dépoli personnalisé premium */
         .glass-card {
             background: rgba(255, 255, 255, 0.45);
             backdrop-filter: blur(16px) saturate(180%);
@@ -36,57 +35,37 @@
                 0 8px 32px 0 rgba(31, 38, 135, 0.07),
                 inset 0 0 0 1px rgba(255, 255, 255, 0.2);
         }
-        
         .glass-card:hover {
             background: rgba(255, 255, 255, 0.55);
             border: 1px solid rgba(255, 255, 255, 0.6);
         }
-
-        /* Animation Sophistiquée : Avion en papier qui s'envole */
         @keyframes paper-plane-fly {
-            0% {
-                transform: translate(0, 0) rotate(0deg) scale(1);
-                opacity: 1;
-            }
-            20% {
-                transform: translate(-10px, 10px) rotate(-10deg) scale(1.1);
-                opacity: 1;
-            }
-            100% {
-                transform: translate(400px, -400px) rotate(15deg) scale(0.5);
-                opacity: 0;
-            }
+            0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; }
+            20% { transform: translate(-10px, 10px) rotate(-10deg) scale(1.1); opacity: 1; }
+            100% { transform: translate(400px, -400px) rotate(15deg) scale(0.5); opacity: 0; }
         }
-        .animate-fly {
-            animation: paper-plane-fly 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-
+        .animate-fly { animation: paper-plane-fly 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
         @keyframes fade-in-up {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .animate-fade-in-up {
-            animation: fade-in-up 0.6s ease-out forwards;
-        }
+        .animate-fade-in-up { animation: fade-in-up 0.6s ease-out forwards; }
     </style>
 <script type="importmap">
 {
   "imports": {
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react": "https://esm.sh/react@^19.2.3",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react-router-dom": "https://esm.sh/react-router-dom@^7.12.0"
+    "react": "https://esm.sh/react@18.3.1",
+    "react/": "https://esm.sh/react@18.3.1/",
+    "react-dom": "https://esm.sh/react-dom@18.3.1",
+    "react-dom/": "https://esm.sh/react-dom@18.3.1/",
+    "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+    "react-router-dom": "https://esm.sh/react-router-dom@6.22.3?external=react,react-dom"
   }
 }
 </script>
 </head>
 <body>
     <div id="root"></div>
+    <script type="module" src="index.tsx"></script>
 </body>
 </html>
