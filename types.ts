@@ -11,9 +11,9 @@ export interface Testimonial {
   email?: string;
   message: string;
   rating: number;
-  createdAt: string;
+  created_at: string;
   status: TestimonialStatus;
-  isCertified?: boolean;
+  is_certified?: boolean;
 }
 
 export interface StorageData {

@@ -11,29 +11,29 @@ export const getTestimonials = async (): Promise<Testimonial[]> => {
   const { data, error } = await supabase
     .from('testimonials')
     .select('*')
-    .order('createdAt', { ascending: false });
+    .order('created_at', { ascending: false });
 
   if (error) {
-    console.error('Erreur Supabase (fetch):', error);
-    return [];
+    console.error('Supabase fetch error:', error);
+    throw new Error(error.message);
   }
   return data as Testimonial[];
 };
 
-export const saveTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'createdAt' | 'status' | 'isCertified'>): Promise<void> => {
+export const saveTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'created_at' | 'status' | 'is_certified'>): Promise<void> => {
   const { error } = await supabase
     .from('testimonials')
     .insert([
       {
         ...testimonial,
         status: TestimonialStatus.PENDING,
-        isCertified: false
+        is_certified: false
       }
     ]);
 
   if (error) {
-    console.error('Erreur Supabase (save):', error);
-    throw error;
+    console.error('Supabase insert error:', error);
+    throw new Error(error.message);
   }
 };
 
@@ -44,20 +44,20 @@ export const updateTestimonialStatus = async (id: string, status: TestimonialSta
     .eq('id', id);
 
   if (error) {
-    console.error('Erreur Supabase (update status):', error);
-    throw error;
+    console.error('Supabase update status error:', error);
+    throw new Error(error.message);
   }
 };
 
 export const toggleTestimonialCertification = async (id: string, currentCertified: boolean): Promise<void> => {
   const { error } = await supabase
     .from('testimonials')
-    .update({ isCertified: !currentCertified })
+    .update({ is_certified: !currentCertified })
     .eq('id', id);
 
   if (error) {
-    console.error('Erreur Supabase (toggle certify):', error);
-    throw error;
+    console.error('Supabase toggle certify error:', error);
+    throw new Error(error.message);
   }
 };
 
@@ -68,7 +68,7 @@ export const deleteTestimonial = async (id: string): Promise<void> => {
     .eq('id', id);
 
   if (error) {
-    console.error('Erreur Supabase (delete):', error);
-    throw error;
+    console.error('Supabase delete error:', error);
+    throw new Error(error.message);
   }
 };

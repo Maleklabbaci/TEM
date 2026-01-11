@@ -42,19 +42,15 @@ const SubmitPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     setLoading(true);
     try {
       await saveTestimonial(formData);
       setSubmitted(true);
       setFormData({ name: '', email: '', message: '', rating: 5 });
-      setErrors({ name: '', message: '' });
-    } catch (e) {
-      alert("Erreur lors de l'envoi vers Supabase. Vérifiez votre connexion.");
+    } catch (err: any) {
+      alert(`Erreur Supabase : ${err.message}\n\nVérifiez que la table 'testimonials' existe et que les politiques RLS autorisent l'insertion.`);
     } finally {
       setLoading(false);
     }
@@ -70,7 +66,7 @@ const SubmitPage: React.FC = () => {
             </svg>
           </div>
           
-          <div className="absolute inset-0 flex items-center justify-center animate-fade-in-up" style={{ animationDelay: '0.8s', opacity: 0 }}>
+          <div className="absolute inset-0 flex items-center justify-center animate-fade-in-up" style={{ animationDelay: '0.8s', opacity: 1 }}>
              <div className="bg-green-100 text-green-600 w-20 h-20 rounded-2xl flex items-center justify-center shadow-xl shadow-green-100/50">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
@@ -79,10 +75,10 @@ const SubmitPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="animate-fade-in-up" style={{ animationDelay: '1s', opacity: 0 }}>
+        <div className="animate-fade-in-up" style={{ animationDelay: '1s', opacity: 1 }}>
           <h2 className="text-2xl md:text-4xl font-black text-slate-900 mb-4 tracking-tight">Message envoyé !</h2>
           <p className="text-sm md:text-xl text-slate-500 mb-8 max-w-sm mx-auto leading-relaxed opacity-80">
-            Votre témoignage est enregistré dans notre base de données. Il sera publié dès validation.
+            Votre témoignage est enregistré. Il sera publié dès validation.
           </p>
           <button
             onClick={() => setSubmitted(false)}
@@ -100,12 +96,11 @@ const SubmitPage: React.FC = () => {
       <div className="glass-card rounded-[2rem] md:rounded-[3rem] shadow-xl overflow-hidden flex flex-col md:flex-row border border-white/50">
         <div className="bg-slate-900 md:w-5/12 p-8 md:p-16 text-white flex flex-col justify-center relative overflow-hidden">
           <div className="hidden md:block absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-blue-600/20 rounded-full blur-3xl"></div>
-          
           <div className="relative z-10">
             <div className="w-10 h-1 bg-blue-500 mb-6 rounded-full"></div>
             <h2 className="text-2xl md:text-5xl font-black mb-4 tracking-tight leading-tight">Votre avis compte.</h2>
             <p className="text-slate-400 leading-relaxed text-sm md:text-lg font-medium opacity-90">
-              Partagez votre ressenti sur nos services et aidez la communauté.
+              Partagez votre expérience et aidez la communauté iVision.
             </p>
           </div>
         </div>
@@ -117,32 +112,26 @@ const SubmitPage: React.FC = () => {
                 <input
                   type="text"
                   value={formData.name}
-                  onChange={(e) => {
-                    setFormData({ ...formData, name: e.target.value });
-                    if (errors.name) setErrors({ ...errors, name: '' });
-                  }}
-                  placeholder="Sophie Richard"
-                  className={`w-full px-5 py-3 md:px-6 md:py-4 bg-white/50 border rounded-xl md:rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:bg-white transition-all outline-none text-sm md:text-lg text-slate-900 ${
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className={`w-full px-5 py-3 md:px-6 md:py-4 bg-white/50 border rounded-xl md:rounded-2xl focus:ring-4 focus:ring-blue-500/10 outline-none text-slate-900 ${
                     errors.name ? 'border-red-500' : 'border-slate-100'
                   }`}
                 />
-                {errors.name && <p className="mt-1 text-[10px] text-red-500 font-bold px-1">{errors.name}</p>}
               </div>
               <div>
-                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">E-mail</label>
+                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">E-mail (optionnel)</label>
                 <input
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder="sophie@ivision.fr"
-                  className="w-full px-5 py-3 md:px-6 md:py-4 bg-white/50 border border-slate-100 rounded-xl md:rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:bg-white transition-all outline-none text-sm md:text-lg text-slate-900"
+                  className="w-full px-5 py-3 md:px-6 md:py-4 bg-white/50 border border-slate-100 rounded-xl md:rounded-2xl focus:ring-4 focus:ring-blue-500/10 outline-none text-slate-900"
                 />
               </div>
             </div>
 
             <div>
               <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1">Note globale</label>
-              <div className="bg-white/30 p-4 md:p-8 rounded-2xl border border-white/60 flex justify-center sm:justify-start">
+              <div className="bg-white/30 p-4 md:p-8 rounded-2xl border border-white/60">
                 <StarRating 
                   rating={formData.rating} 
                   interactive 
@@ -156,33 +145,19 @@ const SubmitPage: React.FC = () => {
               <textarea
                 rows={4}
                 value={formData.message}
-                onChange={(e) => {
-                  setFormData({ ...formData, message: e.target.value });
-                  if (errors.message) setErrors({ ...errors, message: '' });
-                }}
-                placeholder="Racontez-nous tout..."
-                className={`w-full px-5 py-3 md:px-6 md:py-4 bg-white/50 border rounded-xl md:rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:bg-white transition-all outline-none resize-none text-sm md:text-lg leading-relaxed text-slate-900 ${
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                className={`w-full px-5 py-3 md:px-6 md:py-4 bg-white/50 border rounded-xl md:rounded-2xl focus:ring-4 focus:ring-blue-500/10 outline-none resize-none text-slate-900 ${
                   errors.message ? 'border-red-500' : 'border-slate-100'
                 }`}
               ></textarea>
-              {errors.message && <p className="mt-1 text-[10px] text-red-500 font-bold px-1">{errors.message}</p>}
             </div>
 
             <button
               disabled={loading}
               type="submit"
-              className={`w-full bg-blue-600 text-white py-4 md:py-6 rounded-xl md:rounded-2xl font-black text-sm md:text-xl hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 active:scale-[0.98] flex items-center justify-center gap-3 ${
-                loading ? 'opacity-70 cursor-not-allowed' : ''
-              }`}
+              className="w-full bg-blue-600 text-white py-4 md:py-6 rounded-xl font-black text-sm md:text-xl shadow-xl hover:bg-blue-700 transition-all active:scale-95 disabled:opacity-50"
             >
-              {loading ? (
-                <div className="flex items-center gap-2">
-                  <div className="h-5 w-5 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  <span>Sync avec Supabase...</span>
-                </div>
-              ) : (
-                'Envoyer mon avis'
-              )}
+              {loading ? 'Envoi en cours...' : 'Envoyer mon avis'}
             </button>
           </form>
         </div>
