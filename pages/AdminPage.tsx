@@ -38,11 +38,14 @@ const AdminPage: React.FC = () => {
     e.preventDefault();
     if (!password) return;
     setIsLoggingIn(true);
-    if (await login(password)) {
+    
+    const success = await login(password);
+    
+    if (success) {
       setIsAuth(true);
       setPassword('');
     } else {
-      alert('Mot de passe incorrect. Le mot de passe par défaut est : adminadmin');
+      alert('Accès refusé. Mot de passe incorrect.');
     }
     setIsLoggingIn(false);
   };
@@ -94,7 +97,7 @@ const AdminPage: React.FC = () => {
             </svg>
           </div>
           <h2 className="text-2xl font-black text-slate-900 mb-2 text-center">Espace Admin</h2>
-          <p className="text-slate-400 text-center mb-10 text-sm font-medium">Sécurisé par iVision</p>
+          <p className="text-slate-400 text-center mb-10 text-sm font-medium">Authentification via Supabase</p>
           
           <form onSubmit={handleLogin} className="w-full space-y-6">
             <input
@@ -102,7 +105,7 @@ const AdminPage: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Mot de passe"
-              className="w-full px-6 py-5 bg-slate-50 border border-slate-100 rounded-2xl outline-none text-center text-xl tracking-widest focus:ring-4 focus:ring-slate-900/5 transition-all"
+              className="w-full px-6 py-5 bg-slate-50 border border-slate-200 rounded-2xl outline-none text-center text-xl tracking-widest focus:ring-4 focus:ring-slate-900/5 transition-all"
               autoFocus
             />
             <button 
@@ -110,7 +113,12 @@ const AdminPage: React.FC = () => {
               type="submit" 
               className="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold shadow-xl hover:bg-black transition-all active:scale-95 flex items-center justify-center"
             >
-              {isLoggingIn ? 'Ouverture...' : 'Accéder au panel'}
+              {isLoggingIn ? (
+                <div className="flex items-center gap-2">
+                  <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <span>Vérification...</span>
+                </div>
+              ) : 'Accéder au panel'}
             </button>
           </form>
         </div>

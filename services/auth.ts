@@ -1,31 +1,48 @@
 
+import { supabase } from './storage.ts';
+
 const SESSION_KEY = 'ivision_admin_session';
-const ADMIN_PASSWORD = 'adminadmin';
 
 /**
- * Vérifie le mot de passe pour l'accès admin.
- * Utilise une comparaison directe pour garantir que "ça entre" à tous les coups.
+ * Vérifie le mot de passe en interrogeant la table admin_config dans Supabase.
+ * On cherche une ligne où le mot de passe correspond à la saisie.
  */
 export const login = async (password: string): Promise<boolean> => {
-  // Un petit délai pour le feeling "chargement"
-  await new Promise(r => setTimeout(r, 300));
-  
-  if (password.trim() === ADMIN_PASSWORD) {
-    sessionStorage.setItem(SESSION_KEY, 'true');
-    return true;
+  try {
+    // On tente de récupérer l'ID de la ligne si le mot de passe correspond
+    const { data, error } = await supabase
+      .from('admin_config')
+      .select('id')
+      .eq('password', password.trim())
+      .maybeSingle();
+
+    if (error) {
+      console.error('Erreur lors de la vérification du mot de passe:', error);
+      return false;
+    }
+
+    // Si une ligne est retournée, le mot de passe est correct
+    if (data) {
+      sessionStorage.setItem(SESSION_KEY, 'true');
+      return true;
+    }
+    
+    return false;
+  } catch (err) {
+    console.error('Erreur technique auth:', err);
+    return false;
   }
-  return false;
 };
 
 /**
- * Vérifie si l'utilisateur est authentifié
+ * Vérifie si l'utilisateur est authentifié localement (session en cours)
  */
 export const isAuthenticated = (): boolean => {
   return sessionStorage.getItem(SESSION_KEY) === 'true';
 };
 
 /**
- * Déconnexion
+ * Déconnexion : supprime la clé de session
  */
 export const logout = (): void => {
   sessionStorage.removeItem(SESSION_KEY);
