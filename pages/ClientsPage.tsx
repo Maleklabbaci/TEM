@@ -6,10 +6,18 @@ import StarRating from '../components/StarRating.tsx';
 
 const ClientsPage: React.FC = () => {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const all = getTestimonials();
-    setTestimonials(all.filter(t => t.status === TestimonialStatus.APPROVED));
+    const fetch = async () => {
+      try {
+        const all = await getTestimonials();
+        setTestimonials(all.filter(t => t.status === TestimonialStatus.APPROVED));
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetch();
   }, []);
 
   return (
@@ -24,7 +32,12 @@ const ClientsPage: React.FC = () => {
         </p>
       </header>
 
-      {testimonials.length === 0 ? (
+      {loading ? (
+        <div className="flex flex-col items-center justify-center py-20 space-y-4">
+          <div className="h-10 w-10 border-4 border-blue-600/10 border-t-blue-600 rounded-full animate-spin"></div>
+          <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Connexion au cloud iVision...</p>
+        </div>
+      ) : testimonials.length === 0 ? (
         <div className="text-center py-16 glass-card rounded-[2rem] border-2 border-dashed border-white/50 mx-2">
           <p className="text-slate-400 italic font-medium">Aucun témoignage publié pour le moment.</p>
         </div>

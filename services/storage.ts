@@ -1,66 +1,74 @@
 
-import { Testimonial, TestimonialStatus, StorageData } from '../types.ts';
+import { createClient } from '@supabase/supabase-js';
+import { Testimonial, TestimonialStatus } from '../types.ts';
 
-const STORAGE_KEY = 'ivision_testimonials_data';
+const SUPABASE_URL = 'https://gtblvpzwmtssliomtoii.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_BKeUFU25FrAnFATV9XxRfA_nZE9b2p3';
 
-const INITIAL_DATA: Testimonial[] = [
-  {
-    id: '1',
-    name: 'Jean Dupont',
-    email: 'jean@example.com',
-    message: 'Un service exceptionnel ! L\'équipe d\'iVision a su répondre à toutes mes attentes avec un professionnalisme rare.',
-    rating: 5,
-    createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
-    status: TestimonialStatus.APPROVED,
-    isCertified: true
-  },
-  {
-    id: '2',
-    name: 'Marie Claire',
-    email: 'marie@test.fr',
-    message: 'Très satisfaite de mon expérience. Je recommande vivement leurs services pour tout projet sérieux.',
-    rating: 4,
-    createdAt: new Date(Date.now() - 86400000).toISOString(),
-    status: TestimonialStatus.APPROVED,
-    isCertified: false
+export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+export const getTestimonials = async (): Promise<Testimonial[]> => {
+  const { data, error } = await supabase
+    .from('testimonials')
+    .select('*')
+    .order('createdAt', { ascending: false });
+
+  if (error) {
+    console.error('Erreur Supabase (fetch):', error);
+    return [];
   }
-];
+  return data as Testimonial[];
+};
 
-export const getTestimonials = (): Testimonial[] => {
-  const data = localStorage.getItem(STORAGE_KEY);
-  if (!data) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ testimonials: INITIAL_DATA }));
-    return INITIAL_DATA;
+export const saveTestimonial = async (testimonial: Omit<Testimonial, 'id' | 'createdAt' | 'status' | 'isCertified'>): Promise<void> => {
+  const { error } = await supabase
+    .from('testimonials')
+    .insert([
+      {
+        ...testimonial,
+        status: TestimonialStatus.PENDING,
+        isCertified: false
+      }
+    ]);
+
+  if (error) {
+    console.error('Erreur Supabase (save):', error);
+    throw error;
   }
-  return (JSON.parse(data) as StorageData).testimonials;
 };
 
-export const saveTestimonial = (testimonial: Omit<Testimonial, 'id' | 'createdAt' | 'status' | 'isCertified'>): void => {
-  const testimonials = getTestimonials();
-  const newTestimonial: Testimonial = {
-    ...testimonial,
-    id: crypto.randomUUID(),
-    createdAt: new Date().toISOString(),
-    status: TestimonialStatus.PENDING,
-    isCertified: false
-  };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ testimonials: [newTestimonial, ...testimonials] }));
+export const updateTestimonialStatus = async (id: string, status: TestimonialStatus): Promise<void> => {
+  const { error } = await supabase
+    .from('testimonials')
+    .update({ status })
+    .eq('id', id);
+
+  if (error) {
+    console.error('Erreur Supabase (update status):', error);
+    throw error;
+  }
 };
 
-export const updateTestimonialStatus = (id: string, status: TestimonialStatus): void => {
-  const testimonials = getTestimonials();
-  const updated = testimonials.map(t => t.id === id ? { ...t, status } : t);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ testimonials: updated }));
+export const toggleTestimonialCertification = async (id: string, currentCertified: boolean): Promise<void> => {
+  const { error } = await supabase
+    .from('testimonials')
+    .update({ isCertified: !currentCertified })
+    .eq('id', id);
+
+  if (error) {
+    console.error('Erreur Supabase (toggle certify):', error);
+    throw error;
+  }
 };
 
-export const toggleTestimonialCertification = (id: string): void => {
-  const testimonials = getTestimonials();
-  const updated = testimonials.map(t => t.id === id ? { ...t, isCertified: !t.isCertified } : t);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ testimonials: updated }));
-};
+export const deleteTestimonial = async (id: string): Promise<void> => {
+  const { error } = await supabase
+    .from('testimonials')
+    .delete()
+    .eq('id', id);
 
-export const deleteTestimonial = (id: string): void => {
-  const testimonials = getTestimonials();
-  const filtered = testimonials.filter(t => t.id !== id);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ testimonials: filtered }));
+  if (error) {
+    console.error('Erreur Supabase (delete):', error);
+    throw error;
+  }
 };

@@ -48,13 +48,16 @@ const SubmitPage: React.FC = () => {
     }
 
     setLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1200));
-    
-    saveTestimonial(formData);
-    setLoading(false);
-    setSubmitted(true);
-    setFormData({ name: '', email: '', message: '', rating: 5 });
-    setErrors({ name: '', message: '' });
+    try {
+      await saveTestimonial(formData);
+      setSubmitted(true);
+      setFormData({ name: '', email: '', message: '', rating: 5 });
+      setErrors({ name: '', message: '' });
+    } catch (e) {
+      alert("Erreur lors de l'envoi vers Supabase. Vérifiez votre connexion.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (submitted) {
@@ -79,7 +82,7 @@ const SubmitPage: React.FC = () => {
         <div className="animate-fade-in-up" style={{ animationDelay: '1s', opacity: 0 }}>
           <h2 className="text-2xl md:text-4xl font-black text-slate-900 mb-4 tracking-tight">Message envoyé !</h2>
           <p className="text-sm md:text-xl text-slate-500 mb-8 max-w-sm mx-auto leading-relaxed opacity-80">
-            Votre témoignage s'est envolé vers nos modérateurs. Il sera publié dès validation.
+            Votre témoignage est enregistré dans notre base de données. Il sera publié dès validation.
           </p>
           <button
             onClick={() => setSubmitted(false)}
@@ -175,15 +178,12 @@ const SubmitPage: React.FC = () => {
               {loading ? (
                 <div className="flex items-center gap-2">
                   <div className="h-5 w-5 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  <span>Envol imminent...</span>
+                  <span>Sync avec Supabase...</span>
                 </div>
               ) : (
                 'Envoyer mon avis'
               )}
             </button>
-            <p className="text-[9px] text-center text-slate-400 font-bold tracking-widest">
-              VÉRIFICATION SYSTÉMATIQUE AVANT PUBLICATION
-            </p>
           </form>
         </div>
       </div>
