@@ -109,7 +109,7 @@ const AdminPage: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-slate-900/5 focus:bg-white outline-none transition-all text-center text-xl tracking-widest"
+              className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-slate-900/5 focus:bg-white outline-none transition-all text-center text-xl tracking-widest text-slate-900"
               disabled={isLoggingIn}
             />
             <button

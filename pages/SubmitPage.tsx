@@ -48,7 +48,8 @@ const SubmitPage: React.FC = () => {
     }
 
     setLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 800));
+    // Simulation d'envoi avec un délai légèrement plus long pour apprécier la transition
+    await new Promise(resolve => setTimeout(resolve, 1200));
     
     saveTestimonial(formData);
     setLoading(false);
@@ -59,22 +60,37 @@ const SubmitPage: React.FC = () => {
 
   if (submitted) {
     return (
-      <div className="max-w-xl mx-auto px-4 py-12 md:py-32 text-center">
-        <div className="bg-green-100 text-green-600 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-green-100/50">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-          </svg>
+      <div className="max-w-xl mx-auto px-4 py-12 md:py-32 text-center overflow-hidden">
+        <div className="relative h-32 flex items-center justify-center mb-8">
+          {/* L'avion qui s'envole */}
+          <div className="animate-fly text-blue-600">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+            </svg>
+          </div>
+          
+          {/* Le cercle de succès qui apparaît après */}
+          <div className="absolute inset-0 flex items-center justify-center animate-fade-in-up" style={{ animationDelay: '0.8s', opacity: 0 }}>
+             <div className="bg-green-100 text-green-600 w-20 h-20 rounded-2xl flex items-center justify-center shadow-xl shadow-green-100/50">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                </svg>
+             </div>
+          </div>
         </div>
-        <h2 className="text-2xl md:text-4xl font-black text-slate-900 mb-4 tracking-tight">Merci !</h2>
-        <p className="text-sm md:text-xl text-slate-500 mb-8 max-w-sm mx-auto leading-relaxed opacity-80">
-          Votre témoignage est en cours de modération.
-        </p>
-        <button
-          onClick={() => setSubmitted(false)}
-          className="w-full sm:w-auto bg-slate-900 text-white px-8 py-4 rounded-xl font-bold hover:scale-105 transition-all shadow-xl active:scale-95"
-        >
-          Écrire un autre avis
-        </button>
+
+        <div className="animate-fade-in-up" style={{ animationDelay: '1s', opacity: 0 }}>
+          <h2 className="text-2xl md:text-4xl font-black text-slate-900 mb-4 tracking-tight">Message envoyé !</h2>
+          <p className="text-sm md:text-xl text-slate-500 mb-8 max-w-sm mx-auto leading-relaxed opacity-80">
+            Votre témoignage s'est envolé vers nos modérateurs. Il sera publié dès validation.
+          </p>
+          <button
+            onClick={() => setSubmitted(false)}
+            className="w-full sm:w-auto bg-slate-900 text-white px-8 py-4 rounded-xl font-bold hover:scale-105 transition-all shadow-xl active:scale-95"
+          >
+            Écrire un autre avis
+          </button>
+        </div>
       </div>
     );
   }
@@ -82,12 +98,16 @@ const SubmitPage: React.FC = () => {
   return (
     <div className="max-w-5xl mx-auto px-4 py-6 md:py-20">
       <div className="glass-card rounded-[2rem] md:rounded-[3rem] shadow-xl overflow-hidden flex flex-col md:flex-row border border-white/50">
-        <div className="bg-slate-900 md:w-5/12 p-8 md:p-16 text-white flex flex-col justify-center">
-          <div className="w-10 h-1 bg-blue-500 mb-6 rounded-full"></div>
-          <h2 className="text-2xl md:text-5xl font-black mb-4 tracking-tight leading-tight">Votre avis compte.</h2>
-          <p className="text-slate-400 leading-relaxed text-sm md:text-lg font-medium opacity-90">
-            Aidez-nous à nous améliorer en partageant votre expérience.
-          </p>
+        <div className="bg-slate-900 md:w-5/12 p-8 md:p-16 text-white flex flex-col justify-center relative overflow-hidden">
+          <div className="hidden md:block absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-blue-600/20 rounded-full blur-3xl"></div>
+          
+          <div className="relative z-10">
+            <div className="w-10 h-1 bg-blue-500 mb-6 rounded-full"></div>
+            <h2 className="text-2xl md:text-5xl font-black mb-4 tracking-tight leading-tight">Votre avis compte.</h2>
+            <p className="text-slate-400 leading-relaxed text-sm md:text-lg font-medium opacity-90">
+              Partagez votre ressenti sur nos services et aidez la communauté.
+            </p>
+          </div>
         </div>
         <div className="p-6 md:p-14 md:w-7/12">
           <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8" noValidate>
@@ -102,7 +122,7 @@ const SubmitPage: React.FC = () => {
                     if (errors.name) setErrors({ ...errors, name: '' });
                   }}
                   placeholder="Sophie Richard"
-                  className={`w-full px-5 py-3 md:px-6 md:py-4 bg-white/50 border rounded-xl md:rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:bg-white transition-all outline-none text-sm md:text-lg ${
+                  className={`w-full px-5 py-3 md:px-6 md:py-4 bg-white/50 border rounded-xl md:rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:bg-white transition-all outline-none text-sm md:text-lg text-slate-900 ${
                     errors.name ? 'border-red-500' : 'border-slate-100'
                   }`}
                 />
@@ -115,7 +135,7 @@ const SubmitPage: React.FC = () => {
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="sophie@ivision.fr"
-                  className="w-full px-5 py-3 md:px-6 md:py-4 bg-white/50 border border-slate-100 rounded-xl md:rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:bg-white transition-all outline-none text-sm md:text-lg"
+                  className="w-full px-5 py-3 md:px-6 md:py-4 bg-white/50 border border-slate-100 rounded-xl md:rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:bg-white transition-all outline-none text-sm md:text-lg text-slate-900"
                 />
               </div>
             </div>
@@ -141,7 +161,7 @@ const SubmitPage: React.FC = () => {
                   if (errors.message) setErrors({ ...errors, message: '' });
                 }}
                 placeholder="Racontez-nous tout..."
-                className={`w-full px-5 py-3 md:px-6 md:py-4 bg-white/50 border rounded-xl md:rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:bg-white transition-all outline-none resize-none text-sm md:text-lg leading-relaxed ${
+                className={`w-full px-5 py-3 md:px-6 md:py-4 bg-white/50 border rounded-xl md:rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:bg-white transition-all outline-none resize-none text-sm md:text-lg leading-relaxed text-slate-900 ${
                   errors.message ? 'border-red-500' : 'border-slate-100'
                 }`}
               ></textarea>
@@ -156,7 +176,10 @@ const SubmitPage: React.FC = () => {
               }`}
             >
               {loading ? (
-                <div className="h-5 w-5 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
+                <div className="flex items-center gap-2">
+                  <div className="h-5 w-5 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <span>Envol imminent...</span>
+                </div>
               ) : (
                 'Envoyer mon avis'
               )}
