@@ -71,10 +71,15 @@ const ClientsPage: React.FC = () => {
                   {t.name.charAt(0)}
                 </div>
                 <div className="min-w-0">
-                  <h3 className="font-extrabold text-slate-900 truncate pr-4 text-sm md:text-xl">
+                  <h3 className="font-extrabold text-slate-900 truncate pr-4 text-sm md:text-base leading-tight">
                     {t.name}
                   </h3>
-                  <p className="text-[9px] md:text-[11px] font-black text-slate-400 uppercase tracking-widest mt-0.5">
+                  {t.brand_name && (
+                    <p className="text-blue-600 font-bold text-[10px] uppercase tracking-wide truncate">
+                      {t.brand_name}
+                    </p>
+                  )}
+                  <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest mt-1">
                     {new Date(t.created_at).toLocaleDateString('fr-FR', {
                       month: 'long',
                       year: 'numeric'

@@ -82,7 +82,11 @@ const AdminPage: React.FC = () => {
     let result = filter === 'all' ? [...testimonials] : testimonials.filter(t => t.status === filter);
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
-      result = result.filter(t => t.name.toLowerCase().includes(q) || t.message.toLowerCase().includes(q));
+      result = result.filter(t => 
+        t.name.toLowerCase().includes(q) || 
+        t.message.toLowerCase().includes(q) || 
+        (t.brand_name && t.brand_name.toLowerCase().includes(q))
+      );
     }
     return result.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
   }, [testimonials, filter, searchQuery]);
@@ -137,7 +141,7 @@ const AdminPage: React.FC = () => {
           <div className="relative">
              <input 
               type="text" 
-              placeholder="Filtrer..." 
+              placeholder="Rechercher marque..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 pr-4 py-3 bg-white border border-slate-100 rounded-2xl text-sm outline-none w-48 focus:w-64 transition-all focus:ring-4 focus:ring-blue-500/5"
@@ -180,7 +184,7 @@ const AdminPage: React.FC = () => {
             <table className="w-full text-left border-collapse">
               <thead className="bg-slate-50/50 border-b border-slate-100">
                 <tr>
-                  <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Client</th>
+                  <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Client / Marque</th>
                   <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Avis</th>
                   <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Note</th>
                   <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
@@ -189,13 +193,14 @@ const AdminPage: React.FC = () => {
               <tbody className="divide-y divide-slate-50">
                 {processedTestimonials.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="px-8 py-20 text-center text-slate-300 font-medium italic">Aucun avis trouvé dans cette catégorie.</td>
+                    <td colSpan={4} className="px-8 py-20 text-center text-slate-300 font-medium italic">Aucun avis trouvé.</td>
                   </tr>
                 ) : (
                   processedTestimonials.map((t) => (
                     <tr key={t.id} className={`transition-colors hover:bg-slate-50/50 ${t.status === TestimonialStatus.PENDING ? 'bg-blue-50/30' : ''}`}>
                       <td className="px-8 py-7">
                         <div className="font-bold text-slate-900 text-base">{t.name}</div>
+                        <div className="text-[11px] text-blue-600 font-bold uppercase">{t.brand_name || 'Sans marque'}</div>
                         <div className="text-[10px] text-slate-400 font-medium">{t.email || 'Pas d\'email'}</div>
                       </td>
                       <td className="px-8 py-7">
@@ -216,15 +221,6 @@ const AdminPage: React.FC = () => {
                               title="Approuver"
                             >
                               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
-                            </button>
-                          )}
-                          {t.status === TestimonialStatus.APPROVED && (
-                            <button 
-                              onClick={() => handleStatusChange(t.id, TestimonialStatus.REJECTED)} 
-                              className="p-3 bg-slate-50 text-slate-400 rounded-xl hover:bg-slate-200 transition-all shadow-sm"
-                              title="Retirer"
-                            >
-                              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                             </button>
                           )}
                           <button 

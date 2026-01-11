@@ -8,6 +8,7 @@ export enum TestimonialStatus {
 export interface Testimonial {
   id: string;
   name: string;
+  brand_name?: string;
   email?: string;
   message: string;
   rating: number;

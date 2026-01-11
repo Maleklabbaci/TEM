@@ -20,12 +20,13 @@ export const getTestimonials = async (): Promise<Testimonial[]> => {
   return data || [];
 };
 
-export const saveTestimonial = async (data: { name: string, email: string, message: string, rating: number }): Promise<void> => {
+export const saveTestimonial = async (data: { name: string, brand_name: string, email: string, message: string, rating: number }): Promise<void> => {
   const { error } = await supabase
     .from('testimonials')
     .insert([
       {
         name: data.name,
+        brand_name: data.brand_name || null,
         email: data.email || null,
         message: data.message,
         rating: data.rating,

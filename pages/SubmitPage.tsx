@@ -6,6 +6,7 @@ import StarRating from '../components/StarRating.tsx';
 const SubmitPage: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
+    brand_name: '',
     email: '',
     message: '',
     rating: 5
@@ -48,10 +49,10 @@ const SubmitPage: React.FC = () => {
     try {
       await saveTestimonial(formData);
       setSubmitted(true);
-      setFormData({ name: '', email: '', message: '', rating: 5 });
+      setFormData({ name: '', brand_name: '', email: '', message: '', rating: 5 });
     } catch (err: any) {
       console.error("Détails de l'erreur Supabase:", err);
-      alert(`Oups ! Erreur technique : ${err.message || 'Problème de connexion'}\n\nAssurez-vous d'avoir bien créé la table 'testimonials' dans votre SQL Editor Supabase avec le script fourni.`);
+      alert(`Erreur : ${err.message}\n\nAssurez-vous d'avoir ajouté la colonne 'brand_name' à votre table.`);
     } finally {
       setLoading(false);
     }
@@ -76,9 +77,9 @@ const SubmitPage: React.FC = () => {
         </div>
 
         <div className="animate-fade-in-up" style={{ animationDelay: '1s', opacity: 1 }}>
-          <h2 className="text-2xl md:text-4xl font-black text-slate-900 mb-4 tracking-tight">Message reçu !</h2>
+          <h2 className="text-2xl md:text-4xl font-black text-slate-900 mb-4 tracking-tight">Témoignage envoyé !</h2>
           <p className="text-sm md:text-xl text-slate-500 mb-8 max-w-sm mx-auto leading-relaxed opacity-80">
-            Merci beaucoup. Votre témoignage a été enregistré avec succès et sera publié après modération.
+            Merci beaucoup. Votre retour pour {formData.brand_name || 'votre marque'} a bien été reçu.
           </p>
           <button
             onClick={() => setSubmitted(false)}
@@ -98,9 +99,9 @@ const SubmitPage: React.FC = () => {
           <div className="hidden md:block absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-blue-600/20 rounded-full blur-3xl"></div>
           <div className="relative z-10">
             <div className="w-10 h-1 bg-blue-500 mb-6 rounded-full"></div>
-            <h2 className="text-2xl md:text-5xl font-black mb-4 tracking-tight leading-tight">Votre expérience compte.</h2>
+            <h2 className="text-2xl md:text-5xl font-black mb-4 tracking-tight leading-tight">Valorisez votre marque.</h2>
             <p className="text-slate-400 leading-relaxed text-sm md:text-lg font-medium opacity-90">
-              Aidez-nous à nous améliorer et guidez les autres utilisateurs.
+              Votre expérience aide d'autres entreprises à faire le bon choix avec iVision.
             </p>
           </div>
         </div>
@@ -108,7 +109,7 @@ const SubmitPage: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8" noValidate>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
               <div>
-                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Prénom / Nom</label>
+                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Votre Prénom / Nom</label>
                 <input
                   type="text"
                   value={formData.name}
@@ -120,19 +121,30 @@ const SubmitPage: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">E-mail (optionnel)</label>
+                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Nom de votre marque</label>
                 <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder="jean@exemple.fr"
+                  type="text"
+                  value={formData.brand_name}
+                  onChange={(e) => setFormData({ ...formData, brand_name: e.target.value })}
+                  placeholder="Ex: iVision Corp"
                   className="w-full px-5 py-3 md:px-6 md:py-4 bg-white/50 border border-slate-100 rounded-xl md:rounded-2xl focus:ring-4 focus:ring-blue-500/10 outline-none text-slate-900"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1">Quelle note nous donnez-vous ?</label>
+              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">E-mail de contact (optionnel)</label>
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                placeholder="contact@votre-marque.fr"
+                className="w-full px-5 py-3 md:px-6 md:py-4 bg-white/50 border border-slate-100 rounded-xl md:rounded-2xl focus:ring-4 focus:ring-blue-500/10 outline-none text-slate-900"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1">Note globale</label>
               <div className="bg-white/30 p-4 md:p-8 rounded-2xl border border-white/60">
                 <StarRating 
                   rating={formData.rating} 
@@ -148,7 +160,7 @@ const SubmitPage: React.FC = () => {
                 rows={4}
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                placeholder="Partagez les détails de votre expérience..."
+                placeholder="Racontez-nous votre expérience avec nos services..."
                 className={`w-full px-5 py-3 md:px-6 md:py-4 bg-white/50 border rounded-xl md:rounded-2xl focus:ring-4 focus:ring-blue-500/10 outline-none resize-none text-slate-900 ${
                   errors.message ? 'border-red-500' : 'border-slate-100'
                 }`}
@@ -163,9 +175,9 @@ const SubmitPage: React.FC = () => {
               {loading ? (
                 <>
                   <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  <span>Transmission...</span>
+                  <span>Envoi...</span>
                 </>
-              ) : 'Publier mon avis'}
+              ) : 'Envoyer mon témoignage'}
             </button>
           </form>
         </div>
